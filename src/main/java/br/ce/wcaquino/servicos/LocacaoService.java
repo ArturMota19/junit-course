@@ -8,6 +8,8 @@ import br.ce.wcaquino.entidades.Usuario;
 import static br.ce.wcaquino.utils.DataUtils.adicionarDias;
 
 public class LocacaoService {
+	// colocar os arquivos de teste em test/java... e colocar a mesma estrutura de pacotes,
+	// consigo acessar todas as regras da classe, mesmo que tenha protected
 	
 	public Locacao alugarFilme(Usuario usuario, Filme filme) {
 		Locacao locacao = new Locacao();
