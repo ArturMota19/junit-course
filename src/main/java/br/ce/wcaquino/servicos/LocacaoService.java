@@ -7,6 +7,7 @@ import java.util.Date;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
+import br.ce.wcaquino.utils.DataUtils;
 
 public class LocacaoService {
 	
@@ -28,6 +29,12 @@ public class LocacaoService {
 		return locacao;
 	}
 
+	// Princípio FIRST
+	// FAST -> Teste deve ser executado rápido
+	// INDEPENDENT -> Não deve depender de outro teste
+	// REPEATABLE -> Pode ser executado quando e quantas vezes quiser
+	// SELF-VERIFYING -> Auto verificável, deve saber quando o teste funcionou e quando falhou
+	// TIMELY -> "Oportuno", deve ser criado no momento correto
 	public static void main(String[] args) {
 		// cenario
 		LocacaoService service = new LocacaoService();
@@ -37,9 +44,9 @@ public class LocacaoService {
 		Locacao locacao = service.alugarFilme(usuario, filme);
 
 		// verificacao
-		System.out.println(locacao.getValor());
-		System.out.println(locacao.getDataLocacao());
-		System.out.println(locacao.getDataRetorno());
+		System.out.println(locacao.getValor() == 10.0);
+		System.out.println(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()));
+		System.out.println(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)));
 
 	}
 }
