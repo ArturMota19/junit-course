@@ -1,0 +1,18 @@
+# Class Files #
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Maven #
+
+.classpath
+.project
+.settings/
+target/
+
+# Vim temporary files #
+
+*~
