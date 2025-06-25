@@ -3,7 +3,11 @@ package br.ce.wcaquino.servicos;
 import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.is;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -35,16 +39,41 @@ public class LocacaoServiceTest {
 		4- Test Result Formatter -> Organização de resultado
 		5- Assertions -> Verifica comportamento ou estado do que está sendo testado
      */
+
+    private LocacaoService service;
+
     @Rule
     public ErrorCollector error = new ErrorCollector(); // Coleta erros sem interromper os testes
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
+    // o before pode ser usado para evitar repetição de código, vai ser executado sempre antes dos testes!
+    @Before
+    public void setup(){
+        System.out.print("Before");
+        service = new LocacaoService();
+    }
+
+    @After
+    public void tearDown(){
+        System.out.print("After");
+    }
+
+    // existe também o beforeClass e o afterClass, que se referem as classes
+    @BeforeClass
+    public static void setupClass(){
+        System.out.print("Before Class");
+    }
+
+    @AfterClass
+    public static void tearDownClass(){
+        System.out.print("After Class");
+    }
+
     @Test
     public void testeLocacao() throws Exception { // o throws Exception será gerenciado pelo JUnit
         // cenário -> Pré condições
-        LocacaoService service = new LocacaoService();
         Usuario usuario = new Usuario("Usuario X");
         Filme filme = new Filme("Filme Z", 1, 10.0);
 
@@ -64,7 +93,6 @@ public class LocacaoServiceTest {
     @Test(expected=FilmeSemEstoqueException.class) // o exception não aparece nesse caso pois o JUnit já trata isso
     public void testeLocacao_filmeSemEstoque() throws Exception{
         // cenário -> Pré condições
-        LocacaoService service = new LocacaoService();
         Usuario usuario = new Usuario("Usuario X");
         Filme filme = new Filme("Filme Z", 0, 10.0);
 
@@ -76,7 +104,6 @@ public class LocacaoServiceTest {
     @Test
     public void testeLocacao_usuarioVazio() throws Exception{
         // cenário -> Pré condições
-        LocacaoService service = new LocacaoService();
         //Usuario usuario = new Usuario("Usuario X");
         Filme filme = new Filme("Filme Z", 1, 10.0);
 
@@ -93,7 +120,6 @@ public class LocacaoServiceTest {
     @Test 
     public void testeLocacao_filmeVazio() throws LocadoraException, FilmeSemEstoqueException{
         // cenário -> Pré condições
-        LocacaoService service = new LocacaoService();
         Usuario usuario = new Usuario("Usuario X");
         
         exception.expect(LocadoraException.class);
