@@ -3,6 +3,7 @@ package br.ce.wcaquino.servicos;
 import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.is;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -12,6 +13,7 @@ import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
 import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
+
 
 public class LocacaoServiceTest {
 
@@ -34,7 +36,7 @@ public class LocacaoServiceTest {
     public ErrorCollector error = new ErrorCollector(); // Coleta erros sem interromper os testes
 
     @Test
-    public void testeLocacao() {
+    public void testeLocacao() throws Exception { // o throws Exception será gerenciado pelo JUnit
         // cenário -> Pré condições
         LocacaoService service = new LocacaoService();
         Usuario usuario = new Usuario("Usuario X");
@@ -42,7 +44,7 @@ public class LocacaoServiceTest {
 
         // Ação -> O que vai ser testado
         Locacao locacao = service.alugarFilme(usuario, filme);
-
+        
         // Verificação -> O que deve acontecer
         // AssertThat -> Verifique Que...
         // Deve ser genérico, para que possamos fazer qualquer teste
@@ -50,6 +52,35 @@ public class LocacaoServiceTest {
         error.checkThat(locacao.getValor(), is(10.0));
         error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
         error.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
+    }
 
+    // "Elegante"
+    @Test(expected=Exception.class) // o exception não aparece nesse caso pois o JUnit já trata isso
+    public void testeLocacao_filmeSemEstoque() throws Exception{
+        // cenário -> Pré condições
+        LocacaoService service = new LocacaoService();
+        Usuario usuario = new Usuario("Usuario X");
+        Filme filme = new Filme("Filme Z", 0, 10.0);
+
+        // Ação -> O que vai ser testado
+        service.alugarFilme(usuario, filme);
+    }
+
+    // "Robusta" -> oferece mais controle sobre o tratamento
+    @Test
+    public void testeLocacao_filmeSemEstoque2() throws Exception{
+        // cenário -> Pré condições
+        LocacaoService service = new LocacaoService();
+        Usuario usuario = new Usuario("Usuario X");
+        Filme filme = new Filme("Filme Z", 0, 10.0);
+
+        // Ação -> O que vai ser testado
+        try {
+            service.alugarFilme(usuario, filme);
+            Assert.fail("Deveria lançar uma exceção");
+        } catch (Exception e) {
+            // nesse caso o teste é ok, pois estou tentando impedir que um filme seja criado caso seu estoque seja 0
+            Assert.assertThat(e.getMessage(), is("Filme sem estoque"));
+        }
     }
 }

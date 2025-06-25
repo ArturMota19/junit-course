@@ -21,7 +21,7 @@ public class Filme {
 		this.nome = nome;
 	}
 	public Integer getEstoque() {
-		return estoque;
+		return this.estoque;
 	}
 	public void setEstoque(Integer estoque) {
 		this.estoque = estoque;
