@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
+import org.junit.rules.ExpectedException;
 
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
@@ -34,6 +35,9 @@ public class LocacaoServiceTest {
      */
     @Rule
     public ErrorCollector error = new ErrorCollector(); // Coleta erros sem interromper os testes
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     @Test
     public void testeLocacao() throws Exception { // o throws Exception será gerenciado pelo JUnit
@@ -82,5 +86,22 @@ public class LocacaoServiceTest {
             // nesse caso o teste é ok, pois estou tentando impedir que um filme seja criado caso seu estoque seja 0
             Assert.assertThat(e.getMessage(), is("Filme sem estoque"));
         }
+    }
+
+    // Caso de "Espera"
+    @Test 
+    public void testeLocacao_filmeSemEstoque3() throws Exception{
+        // cenário -> Pré condições
+        LocacaoService service = new LocacaoService();
+        Usuario usuario = new Usuario("Usuario X");
+        Filme filme = new Filme("Filme Z", 0, 10.0);
+        
+        exception.expect(Exception.class);
+        exception.expectMessage("Filme sem estoque");
+
+        // Ação -> O que vai ser testado
+        service.alugarFilme(usuario, filme);
+
+
     }
 }
