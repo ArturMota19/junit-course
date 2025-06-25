@@ -12,6 +12,8 @@ import org.junit.rules.ExpectedException;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
+import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
+import br.ce.wcaquino.exceptions.LocadoraException;
 import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 
@@ -59,7 +61,7 @@ public class LocacaoServiceTest {
     }
 
     // "Elegante"
-    @Test(expected=Exception.class) // o exception não aparece nesse caso pois o JUnit já trata isso
+    @Test(expected=FilmeSemEstoqueException.class) // o exception não aparece nesse caso pois o JUnit já trata isso
     public void testeLocacao_filmeSemEstoque() throws Exception{
         // cenário -> Pré condições
         LocacaoService service = new LocacaoService();
@@ -72,36 +74,38 @@ public class LocacaoServiceTest {
 
     // "Robusta" -> oferece mais controle sobre o tratamento
     @Test
-    public void testeLocacao_filmeSemEstoque2() throws Exception{
+    public void testeLocacao_usuarioVazio() throws Exception{
         // cenário -> Pré condições
         LocacaoService service = new LocacaoService();
-        Usuario usuario = new Usuario("Usuario X");
-        Filme filme = new Filme("Filme Z", 0, 10.0);
+        //Usuario usuario = new Usuario("Usuario X");
+        Filme filme = new Filme("Filme Z", 1, 10.0);
 
         // Ação -> O que vai ser testado
         try {
-            service.alugarFilme(usuario, filme);
+            service.alugarFilme(null, filme);
             Assert.fail("Deveria lançar uma exceção");
-        } catch (Exception e) {
-            // nesse caso o teste é ok, pois estou tentando impedir que um filme seja criado caso seu estoque seja 0
-            Assert.assertThat(e.getMessage(), is("Filme sem estoque"));
+        } catch (LocadoraException e) {
+            Assert.assertThat(e.getMessage(), is("Usuario vazio"));
         }
     }
 
     // Caso de "Espera"
     @Test 
-    public void testeLocacao_filmeSemEstoque3() throws Exception{
+    public void testeLocacao_filmeVazio() throws LocadoraException, FilmeSemEstoqueException{
         // cenário -> Pré condições
         LocacaoService service = new LocacaoService();
         Usuario usuario = new Usuario("Usuario X");
-        Filme filme = new Filme("Filme Z", 0, 10.0);
         
-        exception.expect(Exception.class);
-        exception.expectMessage("Filme sem estoque");
+        exception.expect(LocadoraException.class);
+        exception.expectMessage("Filme vazio");
 
         // Ação -> O que vai ser testado
-        service.alugarFilme(usuario, filme);
-
-
+        service.alugarFilme(usuario, null);
     }
 }
+
+/*
+ * Em resumo, a forma elegante funciona bem quando garante-se que a exceção é lançada apenas naquele motivo
+ * A robusta é melhor quando se quer ter maior controle (Ex: printar pós try catch)
+ * Em grande parte das vezes, a forma de espera funciona bem. Contudo, recomenda-se que se utilize a Robusta.
+ */
