@@ -2,7 +2,8 @@ package br.ce.wcaquino.servicos;
 
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -37,8 +38,11 @@ public class LocacaoServiceTest {
         Filme filme = new Filme("Filme Z", 1, 10.0);
 
         Locacao locacao = service.alugarFilme(usuario, filme);
+				// AssertThat -> Verifique Que...
+				// Deve ser genérico, para que possamos fazer qualquer teste
+				// Fluid Interface
+				assertThat(locacao.getValor(), is(10.0));
 
-        assertEquals(10.0, locacao.getValor(), 0.01);
         assertTrue(isMesmaData(locacao.getDataLocacao(), new Date()));
         assertTrue(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)));
     }
